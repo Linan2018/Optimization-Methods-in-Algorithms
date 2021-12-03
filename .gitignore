@@ -1,0 +1,13 @@
+__pycache__
+.idea
+.vscode
+checkpoints
+data
+logs
+runs
+bin/*.pid
+*.log
+test.py
+*.pkl
+cache
+*.svg

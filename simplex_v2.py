@@ -22,27 +22,27 @@ class Simplex(object):
         assert b_shape[0] == A_shape[0], "Not Aligned A with b shape"
 
 
-        # 找到初始的B，N等值
-        end_index = A_shape[1] - A_shape[0]
-        # 第一个B必须是可逆的矩阵，其实这里应该用算法寻找，但此处省略
-        B = self.A[:, end_index:]
-        B_columns = np.arange(end_index, A_shape[1])
-        c_B = self.c[B_columns, :]
-        # N
-        N = self.A[:, 0:end_index]
-        N_columns = np.arange(0, end_index)
-        c_N = self.c[N_columns, :]
-
         # # 找到初始的B，N等值
         # end_index = A_shape[1] - A_shape[0]
         # # 第一个B必须是可逆的矩阵，其实这里应该用算法寻找，但此处省略
-        # B = self.A[:, :A_shape[0]]
-        # B_columns = np.arange(0, A_shape[0])
+        # B = self.A[:, end_index:]
+        # B_columns = np.arange(end_index, A_shape[1])
         # c_B = self.c[B_columns, :]
         # # N
-        # N = self.A[:, A_shape[0]:]
-        # N_columns = np.arange(A_shape[0], A_shape[1])
+        # N = self.A[:, 0:end_index]
+        # N_columns = np.arange(0, end_index)
         # c_N = self.c[N_columns, :]
+
+        # 找到初始的B，N等值
+        end_index = A_shape[1] - A_shape[0]
+        # 第一个B必须是可逆的矩阵，其实这里应该用算法寻找，但此处省略
+        B = self.A[:, :A_shape[0]]
+        B_columns = np.arange(0, A_shape[0])
+        c_B = self.c[B_columns, :]
+        # N
+        N = self.A[:, A_shape[0]:]
+        N_columns = np.arange(A_shape[0], A_shape[1])
+        c_N = self.c[N_columns, :]
 
 
         steps = 0
@@ -78,7 +78,7 @@ class Simplex(object):
         print(N)
         B_inverse = np.linalg.inv(B)
         best_solution_point = np.matmul(B_inverse, b)
-        print("x_B = B^-1 * b = ")
+        print("x_B:")
         print(best_solution_point)
         if best_solution_point.flatten().min() >= 0:
             print("x_B在可行域")
@@ -112,12 +112,12 @@ class Simplex(object):
             y = np.matmul(B_inverse, N_i)
             print(f"y=B^-1 * N_{N_i_in+1} = {y}")
             x_B = np.matmul(B_inverse, b)
-            # print(f"x_B=B^-1 * b = {x_B}")
+            print(f"x_B=B^-1 * b = {x_B}")
             print("求出积")
             N_i_out = self.find_out_base(y, x_B)
             print(f"(x_B)_{N_i_out+1}/y_{N_i_out+1}最小，出积为B_{N_i_out+1}：")
             print(B[:, N_i_out])
-            print(f"对换N_{N_i_in+1}和B_{N_i_out+1}")
+            print(f"兑换N_{N_i_in+1}和B_{N_i_out+1}")
             tmp = N_columns[N_i_in]
             N_columns[N_i_in] = B_columns[N_i_out]
             B_columns[N_i_out] = tmp
@@ -168,13 +168,13 @@ if __name__ == "__main__":
     #               [0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, -1, 0, 0, 0, 0, 0, 0, 0, 1]])
     # b = np.array([2, 6, 2, 2, 5, 0, 0, 0]).reshape(-1, 1)
 
-    # c = np.array([10, 8, 16]).reshape(-1, 1)
-    # A = np.array([[3, 3, 2],
-    #               [4, 3, 7]])
-    # b = np.array([200, 300]).reshape(-1, 1)
-    c = np.array([-20, -30, 0, 0]).reshape(-1, 1)
-    A = np.array([[1, 1, 1, 0],
-                  [0.1, 0.2, 0, 1]])
-    b = np.array([100, 14]).reshape(-1, 1)
+    c = np.array([10, 8, 16]).reshape(-1, 1)
+    A = np.array([[3, 3, 2],
+                  [4, 3, 7]])
+    b = np.array([200, 300]).reshape(-1, 1)
+    # c = np.array([-20, -30, 0, 0]).reshape(-1, 1)
+    # A = np.array([[1, 1, 1, 0],
+    #               [0.1, 0.2, 0, 1]])
+    # b = np.array([100, 14]).reshape(-1, 1)
     simplex = Simplex(c, A, b)
     simplex.run()
